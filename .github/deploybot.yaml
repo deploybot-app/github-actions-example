@@ -1,0 +1,8 @@
+# Deploybot config
+deployments:
+- name: development
+
+- name: staging
+
+- name: production
+  # require manual deploy

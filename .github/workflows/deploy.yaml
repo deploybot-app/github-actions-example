@@ -1,0 +1,45 @@
+name: deploy
+on:
+  deployment
+permissions:
+  contents: read
+  deployments: write
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    env:
+      SHA: ${{ github.event.deployment.sha }}
+      ENVIRONMENT: ${{ github.event.deployment.environment }}
+      DEPLOY_ID: ${{ github.event.deployment.id}}
+    steps:
+      - name: In-progress Status
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: '${{ github.token }}'
+          state: 'in_progress'
+          deployment-id: ${{env.DEPLOY_ID}}
+
+      - name: "Checkout"
+        uses: "actions/checkout@v3"
+
+      - name: "Deploy ${{env.ENVIRONMENT}}"
+        run: |
+          echo "Deploying ${SHA} to ${ENVIRONMENT} environment"
+          # Perform deploy (whatever that means to you) here
+
+      - name: Success Status
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: '${{ github.token }}'
+          state: 'success'
+          deployment-id: ${{env.DEPLOY_ID}}
+
+      - name: Failure Status
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: '${{ github.token }}'
+          state: 'failure'
+          deployment-id: ${{env.DEPLOY_ID}}
