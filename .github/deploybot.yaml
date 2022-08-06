@@ -5,6 +5,9 @@ deployments:
   on_push: true
 
 - name: staging
+  # auto-deploy staging from the staging branch, when tests pass
+  on_push: true
+  on_push_branch: staging
 
 - name: production
   # require manual deploy
